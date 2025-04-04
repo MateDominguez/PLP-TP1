@@ -29,7 +29,7 @@ texto [] = Vacio
 texto t = Texto t Vacio
 
 -- foldDoc :: ... PENDIENTE: Ejercicio 1 ...
-foldDoc = b -> (String -> b -> b) -> (Int -> b -> b) -> (Doc -> b)
+foldDoc :: b -> (String -> b -> b) -> (Int -> b -> b) -> Doc -> b
 foldDoc cVacio cTexto cLinea Vacio = cVacio
 foldDoc cVacio cTexto cLinea (Texto s d) = cTexto s (foldDoc cVacio cTexto cLinea d)
 foldDoc cVacio cTexto cLinea (Linea i d) = cLinea i (foldDoc cVacio cTexto cLinea d)
@@ -40,7 +40,12 @@ foldDoc cVacio cTexto cLinea (Linea i d) = cLinea i (foldDoc cVacio cTexto cLine
 infixr 6 <+>
 
 (<+>) :: Doc -> Doc -> Doc
-d1 <+> d2 = error "PENDIENTE: Ejercicio 2"
+d1 <+> d2 = foldDoc d2 (\t rec -> case d2 of
+  Texto s dd2 -> case rec of
+    Texto s Vacio -> Texto (t++s) dd2
+    _ -> Texto t rec
+  _ -> Texto t rec ) (\i rec -> Linea i rec ) d1
+
 
 indentar :: Int -> Doc -> Doc
 indentar i = error "PENDIENTE: Ejercicio 3"
