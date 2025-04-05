@@ -42,7 +42,7 @@ infixr 6 <+>
 (<+>) :: Doc -> Doc -> Doc
 (<+>) d1 d2 =
   foldDoc
-    d2 -- Caso Vacio
+    d2 -- Caso Vacio: Devuelvo d2
     ( \s1 rec ->
         case d2 of
           Texto s2 d2' ->
@@ -52,20 +52,48 @@ infixr 6 <+>
               _ -> Texto s1 rec -- Caso Contrario: Sigue la recursion
           _ -> Texto s1 rec -- Caso Contrario: Sigue la recursion
     ) -- Caso Texto
-    (\i rec -> Linea i rec) -- Caso Linea
+    (\i rec -> Linea i rec) -- Caso Linea: Agrega la linea y sigue la recursion
     d1
 
+-- Ejercicio 3
 indentar :: Int -> Doc -> Doc
-indentar i = error "PENDIENTE: Ejercicio 3"
+indentar i d =
+  case d of
+    Linea i' d' ->
+      -- d empieza con Linea
+      Linea
+        i'
+        ( foldDoc
+            Vacio -- Caso Vacio
+            Texto -- Caso Texto
+            (\i' rec -> Linea (i + i') rec) -- Caso Linea
+            d
+        )
+    _ ->
+      -- Caso contrario
+      foldDoc
+        Vacio -- Caso Vacio
+        Texto -- Caso Texto
+        (\i' rec -> Linea (i + i') rec) -- Caso Linea
+        d
 
+-- Ejercicio 4
 mostrar :: Doc -> String
-mostrar = error "PENDIENTE: Ejercicio 4"
+mostrar d =
+  foldDoc
+    "" -- Caso Vacio
+    (++) -- Caso Texto
+    (\i rec -> "\n" ++ (nEspacios [1 .. i]) ++ rec) -- Caso Linea
+    d
+
+nEspacios :: [Int] -> String
+nEspacios = foldr (\x rec -> " " ++ rec) ""
 
 -- | Función dada que imprime un documento en pantalla
 
 -- ghci> imprimir (Texto "abc" (Linea 2 (Texto "def" Vacio)))
 -- abc
---   def
+--   def j
 
 imprimir :: Doc -> IO ()
 imprimir d = putStrLn (mostrar d)

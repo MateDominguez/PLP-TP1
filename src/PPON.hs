@@ -8,14 +8,21 @@ data PPON
   | ObjetoPP [(String, PPON)]
   deriving (Eq, Show)
 
+-- Ejercicio 5
 pponAtomico :: PPON -> Bool
-pponAtomico = error "PENDIENTE: Ejercicio 5"
+pponAtomico (ObjetoPP _) = False
+pponAtomico _ = True
 
+-- Ejercicio 6
 pponObjetoSimple :: PPON -> Bool
-pponObjetoSimple = error "PENDIENTE: Ejercicio 6"
+-- si es un ObjetoPP
+pponObjetoSimple (ObjetoPP lista) = foldr (\x rec -> pponAtomico (snd x) && rec) True lista -- si todas las tuplas tiene valores atómicos retorna True de manera contraria retorna False
+-- si no es un ObjetoPP
+pponObjetoSimple _ = False -- no cumple con la condición por lo que retorna False
 
+-- Ejercicio 7
 intercalar :: Doc -> [Doc] -> Doc
-intercalar = error "PENDIENTE: Ejercicio 7"
+intercalar sep = foldr1 (\x rec -> x <+> sep <+> rec)
 
 entreLlaves :: [Doc] -> Doc
 entreLlaves [] = texto "{ }"
@@ -29,8 +36,20 @@ entreLlaves ds =
     <+> linea
     <+> texto "}"
 
+-- Ejercicio 8
 aplanar :: Doc -> Doc
-aplanar = error "PENDIENTE: Ejercicio 8"
+aplanar =
+  foldDoc
+    vacio -- Caso Vacio
+    (\s rec -> if rec == vacio then texto s <+> rec else texto (s ++ " ") <+> rec)
+    -- Caso Texto: concatena un string con un espacio al final si el documento siguiente no es vacio
+    (\i rec -> rec) -- Caso Linea: sigue la recursion
 
+-- Ejercicio 9
 pponADoc :: PPON -> Doc
-pponADoc = error "PENDIENTE: Ejercicio 9"
+pponADoc (TextoPP s) = texto (show s)
+pponADoc (IntPP i) = texto (show i)
+pponADoc (ObjetoPP l) = if pponObjetoSimple (ObjetoPP l) then pponSimple else pponComplejo
+  where
+    pponComplejo = entreLlaves (map (\x -> texto (show (fst x) ++ " : ") <+> pponADoc (snd x)) l)
+    pponSimple = texto "{" <+> intercalar (texto ",") (map (\x -> texto (show (fst x) ++ ":") <+> pponADoc (snd x)) l) <+> texto "}"
