@@ -42,40 +42,23 @@ infixr 6 <+>
 (<+>) :: Doc -> Doc -> Doc
 (<+>) d1 d2 =
   foldDoc
-    d2 -- Caso Vacio: Devuelvo d2
-    ( \s1 rec ->
-        case d2 of
-          Texto s2 d2' ->
-            -- Si d2 empieza con texto,
+    d2 -- Caso Vacio: Devuelvo d2.
+    ( \s1 rec -> -- Caso Texto: Si el llamado recursivo es de tipo Texto ... 
             case rec of
-              Texto s2 Vacio -> Texto (s1 ++ s2) d2' -- y rec es Texto s Vacio: concatena los strings.
-              _ -> Texto s1 rec -- Caso Contrario: Sigue la recursion
-          _ -> Texto s1 rec -- Caso Contrario: Sigue la recursion
-    ) -- Caso Texto
-    (\i rec -> Linea i rec) -- Caso Linea: Agrega la linea y sigue la recursion
+              Texto s2 d2' -> Texto (s1 ++ s2) d2' -- concateno el string del llamado recursivo (s2), al string de la función lambda (s1) ...
+              _ -> Texto s1 rec -- caso Contrario, sigue la recursion.
+    )
+    (\i rec -> Linea i rec) -- Caso Linea: Agrega la linea y sigue la recursion.
     d1
 
 -- Ejercicio 3
 indentar :: Int -> Doc -> Doc
 indentar i d =
-  case d of
-    Linea i' d' ->
-      -- d empieza con Linea
-      Linea
-        i'
-        ( foldDoc
-            Vacio -- Caso Vacio
-            Texto -- Caso Texto
-            (\i' rec -> Linea (i + i') rec) -- Caso Linea
-            d
-        )
-    _ ->
-      -- Caso contrario
-      foldDoc
-        Vacio -- Caso Vacio
-        Texto -- Caso Texto
-        (\i' rec -> Linea (i + i') rec) -- Caso Linea
-        d
+  foldDoc
+    Vacio -- Caso Vacio
+    Texto -- Caso Texto
+    (\i' rec -> Linea (i+i') rec)
+    d
 
 -- Ejercicio 4
 mostrar :: Doc -> String
