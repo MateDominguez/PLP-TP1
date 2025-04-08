@@ -36,6 +36,9 @@ entreLlaves ds =
     <+> linea
     <+> texto "}"
 
+-- >>> entreLlaves [texto "a", texto "b", texto "c", texto "d"]
+-- Texto "{" (Linea 0 (Linea 2 (Texto "a" (Texto "," (Linea 2 (Texto "b" (Texto "," (Linea 2 (Texto "c" (Texto "," (Linea 2 (Texto "d" (Linea 0 (Texto "}" Vacio))))))))))))))
+
 -- Ejercicio 8
 aplanar :: Doc -> Doc
 aplanar =

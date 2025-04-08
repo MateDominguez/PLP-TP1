@@ -66,7 +66,7 @@ indentar i d =
         ( foldDoc
             Vacio -- Caso Vacio
             Texto -- Caso Texto
-            (\i' rec -> Linea (i + i') rec) -- Caso Linea
+            (\i'' rec -> Linea (i + i'') rec) -- Caso Linea
             d
         )
     _ ->
