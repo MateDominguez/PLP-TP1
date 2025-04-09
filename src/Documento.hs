@@ -52,8 +52,30 @@ infixr 6 <+>
               _ -> Texto s1 rec -- Caso Contrario: Sigue la recursion
           _ -> Texto s1 rec -- Caso Contrario: Sigue la recursion
     ) -- Caso Texto
-    (\i rec -> Linea i rec) -- Caso Linea: Agrega la linea y sigue la recursion
+    Linea -- Caso Linea: Agrega la linea y sigue la recursion
     d1
+
+-- Invariante
+-- Dado un d1 y d2 que cumplen con el invariante porque se construyen a partir de funciones que mantienen el
+-- invariante (vacio, texto, linea). Queremos ver que d1 <+> d2 tambien cumple con el invariante.
+
+-- Nuestra implementacion de (<+>) usa foldDoc, sabemos que la funcion es aplicada a cada elemento de d1
+--  de la siguiente manera: d1 <+> d2 = (d1' <+> (d1'' <+> (... <+> (d1^(n) <+> d2)))), donde d1', d1'' ... d1^(n)
+-- son los subdocumentos que componen a d1.
+-- Por lo tanto basta con mostrar que se cumple el invariante para cada caso particular de un documento.
+
+-- Si d1 es Vacio: devolvemos d2, que cumple con el invariante. Por lo tanto, cumple el invariante.
+
+-- Si d1 es (Linea i d): concatenamos la linea sin modificar el numero, por lo que si el numero era mayor o igual a 0,
+-- lo seguira siendo despues de la concatenacion. Por lo tanto, cumple con el invariante.
+
+-- Si d1 es (Texto s d): Tenemos dos casos,
+-- 1) Si d es Texto: concatenamos los strings, como partimos de documentos que cumplen el invariante, sabemos que
+-- ninguno de los strings son vacios ni contienen saltos de linea, por lo tanto la concatenacion de los mismos
+-- mantiene el invariante.
+-- Despues de concatenar los strings (++), concatenamos el texto (<+>) con el resto del
+-- documento, como partimos de documentos validos, sabemos que para todo Texto s d, d era Vacio o Linea i d'
+-- 2)
 
 -- Ejercicio 3
 indentar :: Int -> Doc -> Doc
@@ -76,6 +98,8 @@ indentar i d =
         Texto -- Caso Texto
         (\i' rec -> Linea (i + i') rec) -- Caso Linea
         d
+
+-- Invariante
 
 -- Ejercicio 4
 mostrar :: Doc -> String

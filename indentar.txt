@@ -1,0 +1,13 @@
+Ejercicio 10
+Se pide demostar utilizando razonamiento ecuacional e induccion estructural que para todo
+n, m :: Int positivos y x :: Doc.
+
+indentar n (indentar m x) = indentar (n+m) x
+
+Se sugiere demostrar y usar los siguientes lemas:
+
+indentar k Vacio = Vacio para todo k :: Int positivo.
+
+indentar k (Texto s d) = Texto s (indentar k d) para todo k :: Int positivo, s :: String y d :: Doc.
+
+indentar m (Linea k d) = Linea (m+k) (indentar m d) para todo m, k :: Int positivos y d :: Doc.
