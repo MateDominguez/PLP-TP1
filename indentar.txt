@@ -1,13 +1,48 @@
 Ejercicio 10
+
+El principio de reemplazo nos dice que si el programa declara que e1 = e2, cualquier instancia de e1
+es igual a la correspondiente instancia de e2, y viceversa.
+
+Ecuaciones: 
+
+indentar :: Int -> Doc -> Doc
+{I0} indentar i = foldDoc Vacio Texto (\i' rec -> Linea (i + i') rec) 
+
+foldDoc :: b -> (String -> b -> b) -> (Int -> b -> b) -> Doc -> b
+{F0} foldDoc cVacio cTexto cLinea Vacio = cVacio 
+{F1} foldDoc cVacio cTexto cLinea (Texto s d) = cTexto s (foldDoc cVacio cTexto cLinea d)
+{F2} foldDoc cVacio cTexto cLinea (Linea i d) = cLinea i (foldDoc cVacio cTexto cLinea d) 
+
+Demostracion de lemas:
+
+1. indentar k Vacio = Vacio para todo k :: Int positivo.
+
+indentar k Vacio
+= foldDoc Vacio Texto (\i' rec -> Linea (k + i') rec) Vacio // Por {I0}
+= Vacio                                                     // Por {F0}
+∀k :: Int
+
+
+2. indentar k (Texto s d) = Texto s (indentar k d) para todo k :: Int positivo, s :: String y d :: Doc.
+
+indentar k (Texto s d)
+= foldDoc Vacio Texto (\i' rec -> Linea (k + i') rec) (Texto s d) // Por {I0}
+= Texto s (foldDoc Vacio Texto (\i' rec -> Linea (k + i') rec) d) // Por {F1}
+= Texto s (indentar k d)                                          // Por {I0}
+∀k :: Int, s :: String, d :: Doc
+
+
+3. indentar m (Linea k d) = Linea (m+k) (indentar m d) para todo m, k :: Int positivos y d :: Doc.
+
+indentar m (Linea k d)
+= foldDoc Vacio Texto (\i' rec -> Linea (m + i') rec) (Linea k d)                           // Por {I0}
+= (\i' rec -> Linea (m + i') rec) k (foldDoc Vacio Texto (\i' rec -> Linea (m + i') rec) d) // Por {F2}
+= (\i' rec -> Linea (m + i') rec) k (indentar m d)                                          // Por {I0}
+= (\rec -> Linea (m + k) rec) (indentar m d)                                                // Por beta
+= Linea (m + k) (indentar m d)                                                              // Por beta
+
+
 Se pide demostar utilizando razonamiento ecuacional e induccion estructural que para todo
 n, m :: Int positivos y x :: Doc.
 
 indentar n (indentar m x) = indentar (n+m) x
-
-Se sugiere demostrar y usar los siguientes lemas:
-
-indentar k Vacio = Vacio para todo k :: Int positivo.
-
-indentar k (Texto s d) = Texto s (indentar k d) para todo k :: Int positivo, s :: String y d :: Doc.
-
-indentar m (Linea k d) = Linea (m+k) (indentar m d) para todo m, k :: Int positivos y d :: Doc.
