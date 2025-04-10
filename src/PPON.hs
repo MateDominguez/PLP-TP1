@@ -22,7 +22,10 @@ pponObjetoSimple _ = False -- no cumple con la condición por lo que retorna Fal
 
 -- Ejercicio 7
 intercalar :: Doc -> [Doc] -> Doc
-intercalar sep = foldr1 (\x rec -> x <+> sep <+> rec)
+intercalar sep =
+  foldr
+    (\x rec -> x <+> if rec == vacio then rec else sep <+> rec)
+    vacio
 
 entreLlaves :: [Doc] -> Doc
 entreLlaves [] = texto "{ }"
@@ -44,9 +47,8 @@ aplanar :: Doc -> Doc
 aplanar =
   foldDoc
     vacio -- Caso Vacio
-    (\s rec -> if rec == vacio then texto s <+> rec else texto (s ++ " ") <+> rec)
-    -- Caso Texto: concatena un string con un espacio al final si el documento siguiente no es vacio
-    (\i rec -> rec) -- Caso Linea: sigue la recursion
+    (\s rec -> texto s <+> rec) -- Caso Texto: sigue la recursion
+    (\i rec -> texto " " <+> rec) -- Caso Linea: sigue la recursion
 
 -- Ejercicio 9
 pponADoc :: PPON -> Doc
@@ -54,5 +56,5 @@ pponADoc (TextoPP s) = texto (show s)
 pponADoc (IntPP i) = texto (show i)
 pponADoc (ObjetoPP l) = if pponObjetoSimple (ObjetoPP l) then pponSimple else pponComplejo
   where
-    pponComplejo = entreLlaves (map (\x -> texto (show (fst x) ++ " : ") <+> pponADoc (snd x)) l)
-    pponSimple = texto "{" <+> intercalar (texto ",") (map (\x -> texto (show (fst x) ++ ":") <+> pponADoc (snd x)) l) <+> texto "}"
+    pponComplejo = entreLlaves (map (\x -> texto (show (fst x) ++ ": ") <+> pponADoc (snd x)) l)
+    pponSimple = texto "{ " <+> intercalar (texto ", ") (map (\x -> texto (show (fst x) ++ ": ") <+> pponADoc (snd x)) l) <+> texto " }"
