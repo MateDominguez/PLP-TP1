@@ -10,7 +10,7 @@ main = runTestTTAndExit allTests
 allTests :: Test
 allTests =
   test
-    [ -- "Ejercicio 1" ~: testsEj1,
+    [ "Ejercicio 1" ~: testsEj1,
       "Ejercicio 2" ~: testsEj2,
       "Ejercicio 3" ~: testsEj3,
       "Ejercicio 4" ~: testsEj4,
@@ -21,10 +21,16 @@ allTests =
       "Ejercicio 9" ~: testsEj9
     ]
 
--- testsEj1 :: Test
--- testsEj1 =
---   [ foldDoc
---   ]
+doc1 = texto "Que" <+> linea <+> texto "buen " <+> linea <+> texto "equipo"
+
+testsEj1 :: Test
+testsEj1 =
+  test
+    [ foldDoc vacio (\s rec -> texto s <+> rec) (\i rec -> indentar i linea <+> rec) doc1 ~=? doc1,
+      foldDoc vacio (\s rec -> texto "MILF" <+> rec) (\i rec -> indentar i linea <+> rec) doc1 ~=? texto "MILF" <+> linea <+> texto "MILF" <+> linea <+> texto "MILF",
+      foldDoc vacio (\s rec -> vacio) (\i rec -> vacio) doc1 ~=? vacio,
+      foldDoc "" (++) (\i rec -> show i ++ rec) (indentar 3 doc1) ~=? "Que3buen 3equipo"
+    ]
 
 testsEj2 :: Test
 testsEj2 =
