@@ -58,3 +58,10 @@ pponADoc (ObjetoPP l) = if pponObjetoSimple (ObjetoPP l) then pponSimple else pp
   where
     pponComplejo = entreLlaves (map (\x -> texto (show (fst x) ++ ": ") <+> pponADoc (snd x)) l)
     pponSimple = texto "{ " <+> intercalar (texto ", ") (map (\x -> texto (show (fst x) ++ ": ") <+> pponADoc (snd x)) l) <+> texto " }"
+
+-- El tipo de recursión que se utiliza es recursión estructural.
+-- Cuando el constructor es un caso base, devolvemos un valor fijo.
+-- Cuando el constructor es el caso recursivo (ObjetoPP l):
+-- Aplicamos la funcion recursivamente sobre los elementos de la lista l.
+-- Ademas, accedemos al argumento no recursivo del constructor i.e. (fst x).
+-- No modificamos ni accedemos a los valores de l o de los llamados recursivos.

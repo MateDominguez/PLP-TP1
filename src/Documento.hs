@@ -55,10 +55,10 @@ infixr 6 <+>
 -- Dados dos documentos d1 y d2 que cumplen con el invariante porque se construyen a partir de funciones que
 -- mantienen el invariante (vacio, texto, linea). Queremos ver que d1 <+> d2 tambien cumple con el invariante.
 
--- Nuestra implementacion de (<+>) usa foldDoc, sabemos que la funcion es aplicada a cada elemento de d1
--- de la siguiente manera: d1 <+> d2 = (d1' <+> (d1'' <+> (... <+> (d1^(n) <+> d2)))), donde d1', d1'' ... d1^(n)
+-- Nuestra implementacion de (<+>) usa foldDoc, sabemos que la funcion es aplicada a cada constructor de d1
+-- de la siguiente manera: d1 <+> d2 = (d1^(1) <+> (d1^(2) <+> (... <+> (d1^(n) <+> d2)))), donde d1^(1), d1^(2) ... d1^(n)
 -- son los subdocumentos que componen a d1.
--- Por lo tanto basta con mostrar que se cumple el invariante para cada caso particular de un documento.
+-- Por lo tanto basta con mostrar que se cumple el invariante para cada constructor de un documento.
 
 -- Si d1 es Vacio: devolvemos d2, que cumple con el invariante. Por lo tanto, cumple el invariante.
 
