@@ -22,10 +22,8 @@ pponObjetoSimple _ = False -- no cumple con la condición por lo que retorna Fal
 
 -- Ejercicio 7
 intercalar :: Doc -> [Doc] -> Doc
-intercalar sep =
-  foldr
-    (\x rec -> x <+> if rec == vacio then rec else sep <+> rec)
-    vacio
+intercalar sep [] = texto ""
+intercalar sep = foldr1 (\x rec-> x <+> sep <+> rec)
 
 entreLlaves :: [Doc] -> Doc
 entreLlaves [] = texto "{ }"
@@ -54,14 +52,17 @@ aplanar =
 pponADoc :: PPON -> Doc
 pponADoc (TextoPP s) = texto (show s)
 pponADoc (IntPP i) = texto (show i)
-pponADoc (ObjetoPP l) = if pponObjetoSimple (ObjetoPP l) then pponSimple else pponComplejo
+pponADoc (ObjetoPP l) = 
+  if pponObjetoSimple (ObjetoPP l)
+    then texto "{ " <+> intercalar (texto ", ") (map formatear l) <+> texto " }" -- pponSimple
+    else entreLlaves (map formatear l) -- pponComplejo
   where
-    pponComplejo = entreLlaves (map (\x -> texto (show (fst x) ++ ": ") <+> pponADoc (snd x)) l)
-    pponSimple = texto "{ " <+> intercalar (texto ", ") (map (\x -> texto (show (fst x) ++ ": ") <+> pponADoc (snd x)) l) <+> texto " }"
+    formatear = (\(key,rec) -> texto (show key ++ ": ") <+> pponADoc rec)
 
--- El tipo de recursión que se utiliza es recursión estructural.
--- Cuando el constructor es un caso base, devolvemos un valor fijo.
--- Cuando el constructor es el caso recursivo (ObjetoPP l):
--- Aplicamos la funcion recursivamente sobre los elementos de la lista l.
--- Ademas, accedemos al argumento no recursivo del constructor i.e. (fst x).
--- No modificamos ni accedemos a los valores de l o de los llamados recursivos.
+-- La función utiliza recursion primitiva.
+-- En los casos base (TextoPP y IntPP) devolvemos un valor fijo
+-- En el caso recursivo (ObjetoPP l):
+--   * Usamos l para decidir si PPON es pponObjetoSimple
+--   * Hacemos el llamado recursivo sobre los elementos de l (snd x)
+-- Como usamos l tanto para el llamado recursivo como para otras operaciones, 
+-- podemos decir que es recursion primitiva.
